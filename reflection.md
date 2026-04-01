@@ -3,9 +3,43 @@
 ## 1. System Design
 
 **a. Initial design**
+Briefly describe your initial UML design.
+What classes did you include, and what responsibilities did you assign to each?
+---
+The app is built around three core user actions:
 
-- Briefly describe your initial UML design.
-- What classes did you include, and what responsibilities did you assign to each?
+1. **Enter owner and pet information.** The user provides basic context about themselves and their pet — such as the pet's name, type, and how much time the owner has available each day. This information sets the constraints the scheduler will work within.
+
+2. **Add and manage care tasks.** The user creates a list of tasks their pet needs (walks, feeding, medication, grooming, enrichment, etc.), each with a duration and a priority level. The user can also edit or remove tasks as their pet's needs change.
+
+3. **Generate and view a daily plan.** The user triggers the scheduler, which arranges tasks into a realistic daily schedule based on time availability and priority. The app displays the resulting plan and explains why tasks were ordered the way they were — helping the owner understand the reasoning, not just the outcome.
+
+---
+
+**Main objects:**
+
+**Owner**
+- Attributes: `name: str`, `available_minutes: int`, `preferences: list[str]`
+- Responsibilities: stores the owner's daily time budget and any care preferences (e.g., prefers morning walks)
+
+**Pet**
+- Attributes: `name: str`, `species: str`, `owner: Owner`
+- Responsibilities: identifies the pet and links it to the owner whose constraints apply
+
+**Task**
+- Attributes: `name: str`, `category: str`, `duration_minutes: int`, `priority: int` (1 = low, 5 = high)
+- Methods: `__repr__()` for display; `__lt__()` to support priority-based sorting
+- Responsibilities: represents a single care item the owner wants to schedule
+
+**Scheduler**
+- Attributes: `pet: Pet`, `tasks: list[Task]`, `available_minutes: int`
+- Methods: `generate_plan() -> DailyPlan`, `_sort_tasks() -> list[Task]`
+- Responsibilities: applies constraints (time budget) and priorities to decide which tasks fit and in what order
+
+**DailyPlan**
+- Attributes: `scheduled: list[Task]`, `skipped: list[Task]`, `total_duration: int`
+- Methods: `explain() -> str`, `summary() -> str`
+- Responsibilities: holds the scheduler's output and can articulate why each decision was made
 
 **b. Design changes**
 
