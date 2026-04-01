@@ -41,6 +41,56 @@ The app is built around three core user actions:
 - Methods: `explain() -> str`, `summary() -> str`
 - Responsibilities: holds the scheduler's output and can articulate why each decision was made
 
+---
+
+**UML Class Diagram:**
+
+```mermaid
+classDiagram
+    class Owner {
+        +str name
+        +int available_minutes
+        +list~str~ preferences
+    }
+
+    class Pet {
+        +str name
+        +str species
+        +Owner owner
+    }
+
+    class Task {
+        +str name
+        +str category
+        +int duration_minutes
+        +int priority
+        +__repr__() str
+        +__lt__(other) bool
+    }
+
+    class Scheduler {
+        +Pet pet
+        +list~Task~ tasks
+        +int available_minutes
+        +generate_plan() DailyPlan
+        -_sort_tasks() list~Task~
+    }
+
+    class DailyPlan {
+        +list~Task~ scheduled
+        +list~Task~ skipped
+        +int total_duration
+        +explain() str
+        +summary() str
+    }
+
+    Pet "*" --> "1" Owner : belongs to
+    Scheduler "1" --> "1" Pet : schedules for
+    Scheduler "1" o-- "0..*" Task : manages
+    Scheduler ..> DailyPlan : creates
+    DailyPlan "1" o-- "0..*" Task : contains
+```
+
 **b. Design changes**
 
 - Did your design change during implementation?
